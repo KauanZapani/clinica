@@ -1,15 +1,22 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: API da Clínica de Cirurgia Plástica
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: clients
+    description: Client management
+  - name: services
+    description: Service management
+  - name: appointments
+    description: Appointment management
+  - name: dashboard
+    description: Dashboard summary
 paths:
   /healthz:
     get:
@@ -24,6 +31,326 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /clients:
+    get:
+      operationId: listClients
+      tags: [clients]
+      summary: List all clients
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Client"
+    post:
+      operationId: createClient
+      tags: [clients]
+      summary: Create a new client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientInput"
+      responses:
+        "201":
+          description: Created client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+
+  /clients/{id}:
+    get:
+      operationId: getClient
+      tags: [clients]
+      summary: Get client by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateClient
+      tags: [clients]
+      summary: Update a client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientUpdate"
+      responses:
+        "200":
+          description: Updated client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+    delete:
+      operationId: deleteClient
+      tags: [clients]
+      summary: Delete a client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /services:
+    get:
+      operationId: listServices
+      tags: [services]
+      summary: List all services
+      responses:
+        "200":
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+    post:
+      operationId: createService
+      tags: [services]
+      summary: Create a new service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceInput"
+      responses:
+        "201":
+          description: Created service
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+
+  /services/{id}:
+    get:
+      operationId: getService
+      tags: [services]
+      summary: Get service by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Service
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateService
+      tags: [services]
+      summary: Update a service
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceUpdate"
+      responses:
+        "200":
+          description: Updated service
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+    delete:
+      operationId: deleteService
+      tags: [services]
+      summary: Delete a service
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /appointments:
+    get:
+      operationId: listAppointments
+      tags: [appointments]
+      summary: List appointments
+      parameters:
+        - name: clientId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of appointments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AppointmentWithDetails"
+    post:
+      operationId: createAppointment
+      tags: [appointments]
+      summary: Create appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentInput"
+      responses:
+        "201":
+          description: Created appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentWithDetails"
+
+  /appointments/{id}:
+    get:
+      operationId: getAppointment
+      tags: [appointments]
+      summary: Get appointment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentWithDetails"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateAppointment
+      tags: [appointments]
+      summary: Update appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentUpdate"
+      responses:
+        "200":
+          description: Updated appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentWithDetails"
+    delete:
+      operationId: deleteAppointment
+      tags: [appointments]
+      summary: Delete appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary statistics
+      responses:
+        "200":
+          description: Summary data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /appointments/lookup:
+    get:
+      operationId: lookupAppointments
+      tags: [appointments]
+      summary: Lookup appointments by client name or CPF
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Matching appointments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AppointmentWithDetails"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +361,215 @@ components:
       required:
         - status
 
+    Client:
+      type: object
+      required: [id, name, email, phone, cpf, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        cpf:
+          type: string
+        birthDate:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    ClientInput:
+      type: object
+      required: [name, email, phone, cpf]
+      properties:
+        name:
+          type: string
+          minLength: 2
+        email:
+          type: string
+        phone:
+          type: string
+        cpf:
+          type: string
+        birthDate:
+          type: string
+        address:
+          type: string
+        notes:
+          type: string
+
+    ClientUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        cpf:
+          type: string
+        birthDate:
+          type: string
+        address:
+          type: string
+        notes:
+          type: string
+
+    Service:
+      type: object
+      required: [id, name, description, price, durationMinutes, category, active]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        durationMinutes:
+          type: integer
+        category:
+          type: string
+        active:
+          type: boolean
+
+    ServiceInput:
+      type: object
+      required: [name, description, price, durationMinutes, category]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        durationMinutes:
+          type: integer
+        category:
+          type: string
+        active:
+          type: boolean
+
+    ServiceUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        durationMinutes:
+          type: integer
+        category:
+          type: string
+        active:
+          type: boolean
+
+    Appointment:
+      type: object
+      required: [id, clientId, serviceId, scheduledAt, status, createdAt]
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        serviceId:
+          type: integer
+        scheduledAt:
+          type: string
+        status:
+          type: string
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    AppointmentWithDetails:
+      type: object
+      required: [id, clientId, serviceId, scheduledAt, status, createdAt, clientName, serviceName, servicePrice]
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        serviceId:
+          type: integer
+        scheduledAt:
+          type: string
+        status:
+          type: string
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        clientName:
+          type: string
+        clientPhone:
+          type: ["string", "null"]
+        clientCpf:
+          type: ["string", "null"]
+        serviceName:
+          type: string
+        servicePrice:
+          type: number
+
+    AppointmentInput:
+      type: object
+      required: [clientId, serviceId, scheduledAt]
+      properties:
+        clientId:
+          type: integer
+        serviceId:
+          type: integer
+        scheduledAt:
+          type: string
+        status:
+          type: string
+        notes:
+          type: string
+
+    AppointmentUpdate:
+      type: object
+      properties:
+        clientId:
+          type: integer
+        serviceId:
+          type: integer
+        scheduledAt:
+          type: string
+        status:
+          type: string
+        notes:
+          type: string
+
+    DashboardSummary:
+      type: object
+      required: [totalClients, totalAppointments, appointmentsToday, pendingAppointments, confirmedAppointments, cancelledAppointments, totalRevenue, recentAppointments]
+      properties:
+        totalClients:
+          type: integer
+        totalAppointments:
+          type: integer
+        appointmentsToday:
+          type: integer
+        pendingAppointments:
+          type: integer
+        confirmedAppointments:
+          type: integer
+        cancelledAppointments:
+          type: integer
+        totalRevenue:
+          type: number
+        recentAppointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppointmentWithDetails"
