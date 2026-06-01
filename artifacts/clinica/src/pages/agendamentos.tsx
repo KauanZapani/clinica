@@ -56,7 +56,7 @@ export default function Agendamento() {
       return;
     }
     createMutation.mutate(
-      { data: { ...formData, clientId: Number(formData.clientId), serviceId: Number(formData.serviceId) } },
+      { data: { ...formData, clientId: Number(formData.clientId), serviceId: Number(formData.serviceId), scheduledAt: new Date(formData.scheduledAt).toISOString() } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
@@ -73,7 +73,7 @@ export default function Agendamento() {
     e.preventDefault();
     if (!editApt) return;
     updateMutation.mutate(
-      { id: editApt.id, data: { ...formData, clientId: Number(formData.clientId), serviceId: Number(formData.serviceId) } },
+      { id: editApt.id, data: { ...formData, clientId: Number(formData.clientId), serviceId: Number(formData.serviceId), scheduledAt: new Date(formData.scheduledAt).toISOString() } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
@@ -101,12 +101,18 @@ export default function Agendamento() {
     }
   };
 
+  const toLocalDatetimeInput = (isoStr: string) => {
+    const d = new Date(isoStr);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
   const openEdit = (apt: any) => {
     setEditApt(apt);
     setFormData({
       clientId: apt.clientId,
       serviceId: apt.serviceId,
-      scheduledAt: new Date(apt.scheduledAt).toISOString().slice(0, 16),
+      scheduledAt: toLocalDatetimeInput(apt.scheduledAt),
       status: apt.status,
       notes: apt.notes || "",
     });
