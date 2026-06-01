@@ -9,6 +9,8 @@ import Consulta from "@/pages/consulta";
 import Clientes from "@/pages/clientes";
 import Servicos from "@/pages/servicos";
 import Agendamentos from "@/pages/agendamentos";
+import LoginPage from "@/pages/login";
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
 
 const queryClient = new QueryClient();
 
@@ -27,14 +29,24 @@ function Router() {
   );
 }
 
+function AppContent() {
+  const { user } = useAuth();
+  if (!user) return <LoginPage />;
+  return (
+    <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+      <Router />
+    </WouterRouter>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
+        <AuthProvider>
+          <AppContent />
+          <Toaster />
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

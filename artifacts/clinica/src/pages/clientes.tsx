@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +14,10 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Clientes() {
+  const { isAdmin } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [search, setSearch] = useState("");
@@ -203,12 +204,14 @@ export default function Clientes() {
                     <div className="text-muted-foreground">{client.phone}</div>
                   </td>
                   <td className="p-4 flex gap-2">
-                    <Button variant="outline" size="icon" onClick={() => openEdit(client)}>
+                    <Button variant="outline" size="icon" onClick={() => openEdit(client)} data-testid={`button-edit-client-${client.id}`}>
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button variant="outline" size="icon" className="text-destructive hover:bg-destructive/10" onClick={() => handleDelete(client.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    {isAdmin && (
+                      <Button variant="outline" size="icon" className="text-destructive hover:bg-destructive/10" onClick={() => handleDelete(client.id)} data-testid={`button-delete-client-${client.id}`}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}
